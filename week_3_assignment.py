@@ -19,6 +19,8 @@ while True:
         print(f"Current total: ${total:.2f}")
     elif user_input == "done":
         break
+    else:
+        print("Other category. Try again")
     print()
 if total >= 40.00:
     discount = 5.00
