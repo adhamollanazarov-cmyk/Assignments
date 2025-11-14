@@ -1,0 +1,84 @@
+def calculate_total_profit(dish_tuple):
+    name = dish_tuple[0]
+    category = dish_tuple[1]
+    cost = dish_tuple[2]
+    price = dish_tuple[3]
+    ordered = dish_tuple[4]
+    return ((price - cost) * ordered)
+
+def find_most_profitable_dish(menu_data):
+    profits = []
+    max_profit = 0
+    top_dishes = []
+    for item in menu_data:
+        profit = calculate_total_profit(item)
+        profits.append((item[0],profit))
+    for p in profits:
+        if p[1] > max_profit:
+            max_profit = p[1]
+    for dish_profit in profits:
+        if dish_profit[1] == max_profit:
+            top_dishes.append(dish_profit[0])
+
+    top_dishes.sort()
+    return top_dishes[0]
+ 
+# Input: The main list of menu items.
+# Output: The dish_name of the item that has generated the most total profit. If there’s a tie, return the name that comes first alphabetically.
+
+
+def get_dishes_in_category(menu_data, category_name):
+    dish_names = []
+    for item in menu_data:
+        if item[1] == category_name:
+            dish_names.append(item[0])
+
+    dish_names.sort()
+    return dish_names
+
+# Input: The menu data list and a string category_name.
+# Output: A list of dish_names that belong to the specified category. The list should be sorted alphabetically.
+
+def get_category_popularity(menu_data):
+    category_data = {}
+    result = []
+    for item in menu_data:
+        category = item[1]
+        ordered = item[4]
+        if category in category_data:
+            category_data[category] += ordered
+        else:
+            category_data[category] = ordered
+
+    for category in category_data:
+        result.append((category,category_data[category]))
+
+    result.sort()
+    return result
+   
+# Input: The menu data list.
+# Logic: Find all unique categories. For each category, calculate the total number of times dishes in that category were ordered.
+# Output: A list of tuples ('category_name', total_orders). This list must be sorted alphabetically by category name.
+# Finally, create a main function
+
+def analyze_menu(menu_data):
+    most_profitable_dish = find_most_profitable_dish(menu_data)
+    dishes_in_category = get_dishes_in_category(menu_data, 'Main Course')
+    category_popularity = get_category_popularity(menu_data)
+    return most_profitable_dish,dishes_in_category,category_popularity
+# that uses your helper functions to return
+#  a summary tuple containing: (most_profitable_dish, main_course_dishes, category_summary)
+
+menu_data = [
+    ('Bruschetta', 'Appetizer', 2.50, 8.50, 150),  # Profit: 900
+    ('Steak Frites', 'Main Course', 9.00, 24.00, 200), # Profit: 3000
+    ('Caesar Salad', 'Appetizer', 3.00, 10.00, 250), # Profit: 1750
+    ('Pasta Carbonara', 'Main Course', 5.50, 18.50, 300),# Profit: 3900
+    ('Tiramisu', 'Dessert', 4.00, 9.00, 400)      # Profit: 2000
+]
+
+print(analyze_menu(menu_data))
+
+# Expected Output:
+
+# ('Pasta Carbonara', ['Pasta Carbonara', 'Steak Frites'], [('Appetizer', 400), ('Dessert', 400), ('Main Course', 500)])    
