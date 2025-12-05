@@ -1,0 +1,41 @@
+def calculate_quote(quote_text):
+    text = quote_text.split('\n')  
+    services = 0
+    surcharges = 0
+    credits = 0
+    for t in text:
+        if 'hrs' in t and '$' in t and 'x' in t:
+            detail = t.split(':')[1]
+            hrs = detail.split('x')[0]
+            rate = detail.split('x')[1]
+            hrs = float(hrs.replace('hrs', ''))
+            rate = float(rate.replace('$','').replace('/hr', ''))
+            services += hrs * rate 
+        elif '%' in t:
+            surcharge = t.split(':')[1]
+            surcharges = float(surcharge.replace('%', ''))
+        elif '$' in t:
+            credit = t.split(':')[1]
+            credits = float(credit.replace('$', ''))
+    after_credit = (services - credits) * (1 + (surcharges/100))
+    return f'${after_credit:.2f}'
+
+
+quote1 = """Design : 10 hrs x $50.00/hr
+Coding : 20 hrs x $60.00/hr
+SURCHARGE: 20%
+CREDIT: $100.00"""
+print(calculate_quote(quote1))
+
+
+quote2 = """Consulting : 5 hrs x $100.00/hr
+Reporting : 2 hrs x $50.00/hr
+SURCHARGE: 5%"""
+print(calculate_quote(quote2))
+
+
+quote3 = """Testing : 10 hrs x $30.00/hr
+Docs : 5 hrs x $20.00/hr
+CREDIT: $50.00
+SURCHARGE: 0%"""
+print(calculate_quote(quote3))
