@@ -43,4 +43,5 @@ bookings = [
     ("G1", "Penthouse", 1),   # Error: Invalid room type.
     ("G1", "Standard", 0)     # Error: Nights must be positive.
 ]
+
 print(process_bookings(guests,rooms, bookings))
