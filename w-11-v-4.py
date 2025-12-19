@@ -1,0 +1,46 @@
+def book_stay(guests_db, room_catalog, guest_id, room_type, nights):
+    if guest_id not in guests_db:
+        raise KeyError('Guest ID not found')
+    if room_type not in room_catalog:
+        raise KeyError('Invalid room type')
+    if type(nights) != (int) or nights < 1:
+        raise ValueError('Nights must be positive integer') 
+    total_cost = (nights * room_catalog[room_type]['price']) + room_catalog[room_type]['cleaning_fee']
+    if guests_db[guest_id]['balance'] < total_cost:
+        raise ValueError('Insufficient funds')
+    guests_db[guest_id]['balance'] -= total_cost
+    return float(total_cost)
+
+def process_bookings(guests_db, room_catalog, booking_list):
+    my_dict = {}
+    my_dict['total_revenue'] = 0.0
+    my_dict['failed_bookings'] = 0
+    for booking in booking_list:
+        id, b_type, nights = booking 
+        try:
+            book_s = book_stay(guests_db,room_catalog,id,b_type,nights)
+            my_dict['total_revenue'] += book_s
+        except (KeyError,ValueError) as e:
+            print(f'Booking Error for {id}: {e}')
+            my_dict['failed_bookings'] += 1
+    return my_dict
+# Format: {Type: {"price": float, "cleaning_fee": float}}
+rooms = {
+    "Standard": {"price": 100.0, "cleaning_fee": 20.0},
+    "Suite":    {"price": 200.0, "cleaning_fee": 50.0}
+}
+
+# Format: {GuestID: {"balance": float}}
+guests = {
+    "G1": {"balance": 300.0},
+    "G2": {"balance": 50.0}
+}
+
+bookings = [
+    ("G1", "Standard", 2),    # Valid. Cost: 200+20=220. Rem: 80.
+    ("G2", "Suite", 1),       # Error: Cost 250 > Bal 50.
+    ("G3", "Standard", 1),    # Error: Guest ID not found.
+    ("G1", "Penthouse", 1),   # Error: Invalid room type.
+    ("G1", "Standard", 0)     # Error: Nights must be positive.
+]
+print(process_bookings(guests,rooms, bookings))
