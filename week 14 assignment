@@ -1,0 +1,42 @@
+def build_class_roster(enrollment_data):
+    roster_dict = {}
+    for data in enrollment_data:
+        student_id = data['student_id']
+        full_name = str(data['full_name'])
+        roster_dict[student_id] = full_name
+    return roster_dict
+
+def verify_attendance(roster_dict, sign_in_ids):
+    roster_set = set(roster_dict.keys())
+    ids_set = set(sign_in_ids)
+    absent_students = roster_set - ids_set
+    unregistered_students = ids_set - roster_set
+    return absent_students,unregistered_students
+
+def generate_absence_report(roster_dict, absent_ids):
+    absent_students,unregistered_students  = verify_attendance(roster_dict,absent_ids)
+    list_of_str = list(f"ABSENT: {roster_dict[id]} (ID: {id})" for id in absent_students)
+    list_of_str.sort()
+    return (f'Absent IDs: {absent_students}\n'
+            f'Unregistered IDs: {unregistered_students}\n'
+            f'REPORT: {list_of_str}'
+    )
+
+
+enrollment = [
+    {'student_id': 501, 'full_name': "Sam Porter"},
+    {'student_id': 502, 'full_name': "Fragile Express"},
+    {'student_id': 503, 'full_name': "Die Hardman"}
+]
+
+signed_in = [501, 503, 999]
+
+roster = build_class_roster(enrollment)
+print(generate_absence_report(roster,signed_in))    
+
+
+# Expected Output
+
+# Absent IDs: {502}
+# Unregistered IDs: {999}
+# Report: ['ABSENT: Fragile Express (ID: 502)']
